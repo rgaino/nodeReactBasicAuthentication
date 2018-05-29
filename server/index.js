@@ -13,12 +13,22 @@ sequelize
     console.error("Unable to connect to the database:", err);
   });
 
-//Setting up Express routing
+//Setting up Express
 const express = require("express");
 const app = express();
 
-app.get("/", (req, res) => {
-  res.send("Olá mundão");
-});
+//Setting up Passport
+const passport = require("passport");
+const session = require("express-session");
+
+require("./services/passport")(passport); // pass passport for configuration
+
+// required for passport
+app.use(session({ secret: "ilovescotchscotchyscotchscotch" })); // session secret
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+
+// load our routes and pass in our app and fully configured passport
+require("./app/routes.js")(app, passport);
 
 app.listen(5000);
