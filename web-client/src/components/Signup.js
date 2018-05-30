@@ -19,6 +19,9 @@ class Signup extends Component {
   handleSubmit(event) {
     console.log(this.state);
     event.preventDefault();
+    if (this.state.userPassword != this.state.userPasswordConfirmation) {
+      alert("senhas diferentes");
+    }
   }
 
   render() {
@@ -46,6 +49,15 @@ class Signup extends Component {
           Senha:
           <input
             name="userPassword"
+            type="password"
+            value={this.state.value}
+            onChange={this.handleChange}
+          />
+        </label>
+        <label>
+          Confirme sua senha:
+          <input
+            name="userPasswordConfirmation"
             type="password"
             value={this.state.value}
             onChange={this.handleChange}
