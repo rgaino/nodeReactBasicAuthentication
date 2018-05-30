@@ -1,10 +1,6 @@
 const LocalStrategy = require("passport-local").Strategy;
 const User = require("../models").User;
-var bcrypt = require("bcrypt");
-
-generateHash = function(password) {
-  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-};
+const encription = require("./encryption");
 
 module.exports = function(passport) {
   passport.serializeUser(function(user, done) {
@@ -36,7 +32,7 @@ module.exports = function(passport) {
               var newUser = new User();
               newUser.email = email;
               newUser.name = req.body.name;
-              newUser.password = generateHash(password);
+              newUser.password = encription.generateHash(password);
 
               newUser.save().then(newUserser => {
                 return done(null, newUser);

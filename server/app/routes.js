@@ -1,5 +1,7 @@
 const logger = require("simple-node-logger").createSimpleLogger();
 logger.setLevel("debug");
+const encription = require("../services/encryption");
+
 const User = require("../models").User;
 
 module.exports = function(app, passport) {
@@ -48,11 +50,9 @@ module.exports = function(app, passport) {
       logger.info(
         "Post to /api/signup failed due password and password confirmation not matching."
       );
-      res
-        .status(422)
-        .send({
-          error_message: "A confirmação da senha está diferente da senha."
-        });
+      res.status(422).send({
+        error_message: "A confirmação da senha está diferente da senha."
+      });
       return;
     }
 
@@ -62,7 +62,7 @@ module.exports = function(app, passport) {
       defaults: {
         email: req.body.userEmail,
         name: req.body.userName,
-        password: req.body.userPassword
+        password: encription.generateHash(req.body.userPassword)
       }
     }).spread((user, created) => {
       if (created) {
