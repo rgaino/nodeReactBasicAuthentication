@@ -8,31 +8,38 @@ module.exports = function(app, passport) {
   // });
 
   // app.get("/profile", isLoggedIn, function(req, res) {
-  app.get("/", function(req, res) {
-    res.send({ path: "/" });
-  });
+  // app.get("/", function(req, res) {
+  //   res.send({ path: "/" });
+  // });
 
-  app.get("/profile", isLoggedIn, function(req, res) {
+  app.get("/api/profile", isLoggedIn, function(req, res) {
     // res.send(req.user);
     res.send({ path: "/profile" });
   });
 
-  app.get("/logout", function(req, res) {
+  app.get("/api/logout", function(req, res) {
     req.logout();
     res.redirect("/");
   });
 
-  app.post(
-    "/signup",
-    passport.authenticate("local-signup", {
-      successRedirect: "/profile", // redirect to the secure profile section
-      failureRedirect: "/" // redirect back to the signup page if there is an error
-    })
-    // (req, res) => {
-    //   console.log(req.body);
-    //   res.send(req.body);
-    // }
-  );
+  app.post("/api/signup", function(req, res) {
+    console.log(req.body);
+    // console.log("redirecting to /");
+    // res.redirect("/");
+    res.send(req.body);
+  });
+
+  // app.post(
+  //   "/api/signup",
+  //   passport.authenticate("local-signup", {
+  //     successRedirect: "/profile", // redirect to the secure profile section
+  //     failureRedirect: "/signup" // redirect back to the signup page if there is an error
+  //   })
+  //   (req, res) => {
+  //     console.log(req.body);
+  //     res.send(req.body);
+  //   }
+  // );
 };
 
 // route middleware to make sure a user is logged in
