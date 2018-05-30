@@ -8,6 +8,12 @@ sequelize
   .authenticate()
   .then(() => {
     console.log("Connection has been established successfully.");
+    const User = require("./models").User;
+    User.findAll().then(users => {
+      users.map(user => {
+        console.log(user.email, user.name, user.password);
+      });
+    });
   })
   .catch(err => {
     console.error("Unable to connect to the database:", err);
@@ -15,6 +21,9 @@ sequelize
 
 //Setting up Express
 const express = require("express");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
+
 const app = express();
 
 //Setting up Passport
@@ -24,6 +33,8 @@ const session = require("express-session");
 require("./services/passport")(passport); // pass passport for configuration
 
 // required for passport
+app.use(cookieParser());
+app.use(bodyParser.json());
 app.use(session({ secret: "ilovescotchscotchyscotchscotch" })); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions

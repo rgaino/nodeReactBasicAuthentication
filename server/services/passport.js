@@ -1,5 +1,10 @@
 const LocalStrategy = require("passport-local").Strategy;
-const User = require("../models/user");
+const User = require("../models").User;
+var bcrypt = require("bcrypt");
+
+generateHash = function(password) {
+  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+};
 
 // expose this function to our app using module.exports
 module.exports = function(passport) {
@@ -43,30 +48,28 @@ module.exports = function(passport) {
           // find a user whose email is the same as the forms email
           // we are checking to see if the user trying to login already exists
           // User.findOne({ 'email' :  email }, function(err, user) {
-          User.findOne({ where: { email: email } }).then(
-            (err, existingUser) => {
-              // if there are any errors, return the error
-              if (err) return done(err);
+          User.findOne({ where: { email: email } }).then(existingUser => {
+            // check to see if theres already a user with that email
+            if (existingUser) {
+              console.log("user exists");
+              return done(null, existingUser);
+            } else {
+              // if there is no user with that email
+              // create the user
 
-              // check to see if theres already a user with that email
-              if (user) {
-                return done(null, existingUser);
-              } else {
-                // if there is no user with that email
-                // create the user
-                var newUser = new User();
+              var newUser = new User();
 
-                // set the user's local credentials
-                newUser.email = email;
-                newUser.password = newUser.generateHash(password);
+              // set the user's local credentials
+              newUser.email = email;
+              newUser.name = req.body.name;
+              newUser.password = generateHash(password);
 
-                // save the user
-                newUser.save().then(newUserser => {
-                  return done(null, newUser);
-                });
-              }
+              // save the user
+              newUser.save().then(newUserser => {
+                return done(null, newUser);
+              });
             }
-          );
+          });
         });
       }
     )

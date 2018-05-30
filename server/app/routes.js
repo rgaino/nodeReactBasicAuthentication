@@ -26,8 +26,12 @@ module.exports = function(app, passport) {
     "/signup",
     passport.authenticate("local-signup", {
       successRedirect: "/profile", // redirect to the secure profile section
-      failureRedirect: "/signup" // redirect back to the signup page if there is an error
+      failureRedirect: "/" // redirect back to the signup page if there is an error
     })
+    // (req, res) => {
+    //   console.log(req.body);
+    //   res.send(req.body);
+    // }
   );
 };
 
