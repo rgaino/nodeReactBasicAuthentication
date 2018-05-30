@@ -1,3 +1,7 @@
+const logger = require("simple-node-logger").createSimpleLogger();
+logger.setLevel("debug");
+const User = require("../models").User;
+
 module.exports = function(app, passport) {
   // app.get('/api/login', function(req, res) {
   //     res.render('login.ejs', { message: req.flash('loginMessage') });
@@ -23,10 +27,56 @@ module.exports = function(app, passport) {
   });
 
   app.post("/api/signup", function(req, res) {
-    console.log(req.body);
-    // console.log("redirecting to /");
-    // res.redirect("/");
-    res.send(req.body);
+    logger.debug(req.body);
+
+    //all parameters must be present
+    if (
+      !req.body.userName ||
+      !req.body.userEmail ||
+      !req.body.userPassword ||
+      !req.body.userPasswordConfirmation
+    ) {
+      logger.info(
+        "Post to /api/signup failed due to some fields not being present."
+      );
+      res.status(422).send("Todos os campos são obrigatórios.");
+      return;
+    }
+
+    //password and password confirmation must be equal
+    if (req.body.userPassword !== req.body.userPasswordConfirmation) {
+      logger.info(
+        "Post to /api/signup failed due password and password confirmation not matching."
+      );
+      res
+        .status(422)
+        .send({
+          error_message: "A confirmação da senha está diferente da senha."
+        });
+      return;
+    }
+
+    logger.info("Will findOrCreate new user.");
+    User.findOrCreate({
+      where: { email: req.body.userEmail },
+      defaults: {
+        email: req.body.userEmail,
+        name: req.body.userName,
+        password: req.body.userPassword
+      }
+    }).spread((user, created) => {
+      if (created) {
+        logger.info("User did not exist and was created.");
+        res.send({ user_id: user.id });
+      } else {
+        logger.info("User with email already exists and was not created.");
+        res
+          .status(422)
+          .send({ error_message: "Usuário com o email já existe." });
+      }
+    });
+
+    // res.send(req.body);
   });
 
   // app.post(

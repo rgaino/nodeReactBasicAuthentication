@@ -1,3 +1,6 @@
+const logger = require("simple-node-logger").createSimpleLogger();
+logger.setLevel("debug");
+
 //Setting up database connection
 const Sequelize = require("sequelize");
 const sequelize = new Sequelize(
@@ -7,16 +10,16 @@ const sequelize = new Sequelize(
 sequelize
   .authenticate()
   .then(() => {
-    console.log("Connection has been established successfully.");
-    const User = require("./models").User;
-    User.findAll().then(users => {
-      users.map(user => {
-        console.log(user.email, user.name, user.password);
-      });
-    });
+    logger.info("Connection has been established successfully.");
+    // const User = require("./models").User;
+    // User.findAll().then(users => {
+    //   users.map(user => {
+    //     console.log(user.email, user.name, user.password);
+    //   });
+    // });
   })
   .catch(err => {
-    console.error("Unable to connect to the database:", err);
+    logger.error("Unable to connect to the database:", err);
   });
 
 //Setting up Express

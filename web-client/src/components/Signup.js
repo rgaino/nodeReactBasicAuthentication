@@ -33,18 +33,8 @@ class Signup extends Component {
     }
   }
 
-  async postSignup() {
+  postSignup() {
     console.log("posting to /api/signup");
-    const signupResponse = await axios.post("/api/signup", {
-      userName: this.state.userName,
-      userEmail: this.state.userEmail,
-      userPassword: this.state.userPassword,
-      userPasswordConfirmation: this.state.userPasswordConfirmation
-    });
-    console.log("Server response:", signupResponse);
-    this.setState({ redirectToHome: true });
-
-    /*
     axios
       .post("/api/signup", {
         userName: this.state.userName,
@@ -52,15 +42,14 @@ class Signup extends Component {
         userPassword: this.state.userPassword,
         userPasswordConfirmation: this.state.userPasswordConfirmation
       })
-      .then(function(response) {
-        console.log("fim do post axios sem erro");
-        // this.props.history.push("/");
+      .then(response => {
+        console.log("succes", response);
+        console.log(response.status);
         // this.setState({ redirectToHome: true });
       })
-      .catch(function(error) {
-        console.log("catch do post axios com erro");
-        console.log(error);
-      });*/
+      .catch(error => {
+        console.log("error", error.response.data.error_message);
+      });
   }
 
   render() {
