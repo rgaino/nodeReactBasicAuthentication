@@ -40,16 +40,10 @@ class Signup extends Component {
         userPasswordConfirmation: this.state.userPasswordConfirmation
       })
       .then(response => {
-        toast.success("👍 " + response.data.success_message, {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          draggablePercent: 60
+        this.setState({
+          redirectToHome: true,
+          success_message: response.data.success_message
         });
-        this.setState({ redirectToHome: true });
       })
       .catch(error => {
         toast.error("⚠️ " + error.response.data.error_message, {
@@ -66,7 +60,15 @@ class Signup extends Component {
 
   render() {
     if (this.state.redirectToHome) {
-      return <Redirect to="/" />;
+      return (
+        <Redirect
+          to={{
+            pathname: "/",
+            state: { success_message: this.state.success_message }
+          }}
+        />
+      );
+      // <Redirect to="/" state={ success_message: this.state.success_message }/>;
     }
 
     return (
