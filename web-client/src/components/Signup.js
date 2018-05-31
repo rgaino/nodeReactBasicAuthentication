@@ -28,15 +28,10 @@ class Signup extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    if (this.state.userPassword !== this.state.userPasswordConfirmation) {
-      alert("senhas diferentes");
-    } else {
-      this.postSignup();
-    }
+    this.postSignup();
   }
 
   postSignup() {
-    // console.log("posting to /api/signup");
     axios
       .post("/api/signup", {
         userName: this.state.userName,
@@ -45,12 +40,18 @@ class Signup extends Component {
         userPasswordConfirmation: this.state.userPasswordConfirmation
       })
       .then(response => {
-        // console.log("succes", response);
-        // console.log(response.status);
-        // this.setState({ redirectToHome: true });
+        toast.success("👍 " + response.data.success_message, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          draggablePercent: 60
+        });
+        this.setState({ redirectToHome: true });
       })
       .catch(error => {
-        // console.log("error", error.response.data.error_message);
         toast.error("⚠️ " + error.response.data.error_message, {
           position: "top-right",
           autoClose: 3000,
@@ -71,45 +72,55 @@ class Signup extends Component {
     return (
       <div>
         <ToastContainer />
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Email:
-            <input
-              name="userEmail"
-              type="text"
-              value={this.state.value}
-              onChange={this.handleChange}
-            />
-          </label>
-          <label>
-            Nome:
-            <input
-              name="userName"
-              type="text"
-              value={this.state.value}
-              onChange={this.handleChange}
-            />
-          </label>
-          <label>
-            Senha:
-            <input
-              name="userPassword"
-              type="password"
-              value={this.state.value}
-              onChange={this.handleChange}
-            />
-          </label>
-          <label>
-            Confirme sua senha:
-            <input
-              name="userPasswordConfirmation"
-              type="password"
-              value={this.state.value}
-              onChange={this.handleChange}
-            />
-          </label>
-          <input type="submit" value="Submit" />
-        </form>
+
+        <div>
+          <h1>Crie uma conta</h1>
+        </div>
+
+        <div>
+          <form onSubmit={this.handleSubmit}>
+            <div>
+              <label>Email:</label>
+              <input
+                name="userEmail"
+                type="text"
+                value={this.state.value}
+                onChange={this.handleChange}
+              />
+            </div>
+
+            <div>
+              <label>Nome:</label>
+              <input
+                name="userName"
+                type="text"
+                value={this.state.value}
+                onChange={this.handleChange}
+              />
+            </div>
+
+            <div>
+              <label>Senha: </label>
+              <input
+                name="userPassword"
+                type="password"
+                value={this.state.value}
+                onChange={this.handleChange}
+              />
+            </div>
+
+            <div>
+              <label>Confirme sua senha: </label>
+              <input
+                name="userPasswordConfirmation"
+                type="password"
+                value={this.state.value}
+                onChange={this.handleChange}
+              />
+            </div>
+            <input type="submit" value="Submit" />
+          </form>
+        </div>
       </div>
     );
   }
