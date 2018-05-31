@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.min.css";
+import { toast } from "react-toastify";
 
 class Signup extends Component {
   constructor(props) {
@@ -40,9 +39,18 @@ class Signup extends Component {
         userPasswordConfirmation: this.state.userPasswordConfirmation
       })
       .then(response => {
+        toast.success("👍 " + response.data.success_message, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          draggablePercent: 60
+        });
+
         this.setState({
-          redirectToHome: true,
-          success_message: response.data.success_message
+          redirectToHome: true //,
         });
       })
       .catch(error => {
@@ -73,8 +81,6 @@ class Signup extends Component {
 
     return (
       <div>
-        <ToastContainer />
-
         <div>
           <h1>Crie uma conta</h1>
         </div>
