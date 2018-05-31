@@ -32,7 +32,7 @@ class Signup extends Component {
 
   postSignup() {
     axios
-      .post("/api/signup", {
+      .post("/api/user", {
         userName: this.state.userName,
         userEmail: this.state.userEmail,
         userPassword: this.state.userPassword,

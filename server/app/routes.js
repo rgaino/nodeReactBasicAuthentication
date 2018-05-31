@@ -28,7 +28,7 @@ module.exports = function(app, passport) {
     res.redirect("/");
   });
 
-  app.post("/api/signup", function(req, res) {
+  app.post("/api/user", function(req, res) {
     logger.debug(req.body);
 
     //all parameters must be present
