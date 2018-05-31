@@ -51,7 +51,7 @@ module.exports = function(app, passport) {
         "Post to /api/signup failed due password and password confirmation not matching."
       );
       res.status(422).send({
-        error_message: "A confirmação da senha está diferente da senha."
+        error_message: "As senhas precisam ser iguais."
       });
       return;
     }
@@ -67,7 +67,7 @@ module.exports = function(app, passport) {
     }).spread((user, created) => {
       if (created) {
         logger.info("User did not exist and was created.");
-        res.send({ user_id: user.id });
+        res.send({ success_message: "Usuário criado com sucesso." });
       } else {
         logger.info("User with email already exists and was not created.");
         res

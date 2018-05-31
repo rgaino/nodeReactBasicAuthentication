@@ -5,7 +5,8 @@ class Header extends Component {
   render() {
     return (
       <div>
-        <Link to="/signup">Signup</Link>
+        <Link to="/signup">Criar conta</Link>
+        <Link to="/signin">Entrar</Link>
       </div>
     );
   }
