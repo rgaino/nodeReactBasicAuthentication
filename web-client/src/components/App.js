@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.min.css";
 import Header from "./Header";
 import Landing from "./Landing";
 import Signup from "./Signup";
-import Signin from "./Signup";
+import Signin from "./Signin";
 
 class App extends Component {
   render() {

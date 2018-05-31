@@ -68,28 +68,35 @@ class Signin extends Component {
 
     return (
       <div>
-        <ToastContainer />
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Email:
-            <input
-              name="userEmail"
-              type="text"
-              value={this.state.value}
-              onChange={this.handleChange}
-            />
-          </label>
-          <label>
-            Senha:
-            <input
-              name="userPassword"
-              type="password"
-              value={this.state.value}
-              onChange={this.handleChange}
-            />
-          </label>
-          <input type="submit" value="Submit" />
-        </form>
+        <div>
+          <h1>Entrar</h1>
+        </div>
+
+        <div>
+          <form onSubmit={this.handleSubmit}>
+            <div>
+              <label>Email:</label>
+              <input
+                name="userEmail"
+                type="text"
+                value={this.state.value}
+                onChange={this.handleChange}
+              />
+            </div>
+
+            <div>
+              <label>Senha: </label>
+              <input
+                name="userPassword"
+                type="password"
+                value={this.state.value}
+                onChange={this.handleChange}
+              />
+            </div>
+
+            <input type="submit" value="Submit" />
+          </form>
+        </div>
       </div>
     );
   }
