@@ -1,33 +1,23 @@
+const passport = require("passport");
+const encription = require("../services/encryption");
+const middleware = require("../services/middleware");
+const User = require("../models").User;
 const logger = require("simple-node-logger").createSimpleLogger();
 logger.setLevel("debug");
-const encription = require("../services/encryption");
-
-const User = require("../models").User;
 
 module.exports = function(app, passport) {
-  // app.get('/api/login', function(req, res) {
-  //     res.render('login.ejs', { message: req.flash('loginMessage') });
-  // });
-  //
-  // app.get('/signup', function(req, res) {
-  //     res.render('signup.ejs', { message: req.flash('signupMessage') });
-  // });
-
-  // app.get("/profile", isLoggedIn, function(req, res) {
-  // app.get("/", function(req, res) {
-  //   res.send({ path: "/" });
-  // });
-
-  app.get("/api/profile", isLoggedIn, function(req, res) {
-    // res.send(req.user);
+  app.get("/api/profile", middleware.authenticationMiddleware(), function(req, res) {
+    logger.debug("on GET/api/profile");
     res.send({ path: "/profile" });
   });
 
   app.get("/api/logout", function(req, res) {
+    logger.debug("on GET/api/logout");
     req.logout();
     res.redirect("/");
   });
 
+  //User REST (so far only creates)
   app.post("/api/user", function(req, res) {
     logger.debug(req.body);
 
@@ -38,9 +28,7 @@ module.exports = function(app, passport) {
       !req.body.userPassword ||
       !req.body.userPasswordConfirmation
     ) {
-      logger.info(
-        "Post to /api/signup failed due to some fields not being present."
-      );
+      logger.info("Post to /api/signup failed due to some fields not being present.");
       res.status(422).send("Todos os campos são obrigatórios.");
       return;
     }
@@ -70,33 +58,32 @@ module.exports = function(app, passport) {
         res.send({ success_message: "Usuário criado com sucesso." });
       } else {
         logger.info("User with email already exists and was not created.");
-        res
-          .status(422)
-          .send({ error_message: "Usuário com o email já existe." });
+        res.status(422).send({ error_message: "Usuário com o email já existe." });
       }
     });
-
-    // res.send(req.body);
   });
 
-  // app.post(
-  //   "/api/signup",
-  //   passport.authenticate("local-signup", {
-  //     successRedirect: "/profile", // redirect to the secure profile section
-  //     failureRedirect: "/signup" // redirect back to the signup page if there is an error
-  //   })
-  //   (req, res) => {
-  //     console.log(req.body);
-  //     res.send(req.body);
-  //   }
-  // );
+  app.post("/api/login", function(req, res, next) {
+    logger.debug("Will authenticate");
+    logger.debug(req.body);
+    passport.authenticate("local", function(err, user, info) {
+      if (err) {
+        logger.debug("Error authenticating:", err);
+        return next(err);
+      }
+      if (!user) {
+        logger.debug("User not present, returning error message");
+        return res.status(422).send({ error_message: "Usuário ou senha invalidos" });
+      }
+      req.logIn(user, function(err) {
+        if (err) {
+          logger.debug("Error logging in:", err);
+          return next(err);
+        }
+        logger.debug("Login successful, returning success message");
+        logger.debug(user);
+        return res.send({ success_message: "Olá " + user.name });
+      });
+    })(req, res, next);
+  });
 };
-
-// route middleware to make sure a user is logged in
-function isLoggedIn(req, res, next) {
-  // if user is authenticated in the session, carry on
-  if (req.isAuthenticated()) return next();
-
-  // if they aren't redirect them to the home page
-  res.redirect("/");
-}

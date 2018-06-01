@@ -1,16 +1,15 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 
-class Signin extends Component {
+class Login extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       userEmail: "",
-      userName: "",
       userPassword: "",
       redirectToHome: false
     };
@@ -27,16 +26,18 @@ class Signin extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    this.postSignup();
+    this.postLogin();
   }
 
-  postSignup() {
+  postLogin() {
+    console.log("will post");
     axios
-      .post("/api/signin", {
+      .post("/api/login", {
         userEmail: this.state.userEmail,
         userPassword: this.state.userPassword
       })
       .then(response => {
+        console.log("success");
         toast.success("👍 " + response.data.success_message, {
           position: "top-right",
           autoClose: 3000,
@@ -49,6 +50,7 @@ class Signin extends Component {
         this.setState({ redirectToHome: true });
       })
       .catch(error => {
+        console.log("error", error);
         toast.error("⚠️ " + error.response.data.error_message, {
           position: "top-right",
           autoClose: 3000,
@@ -102,4 +104,4 @@ class Signin extends Component {
   }
 }
 
-export default Signin;
+export default Login;

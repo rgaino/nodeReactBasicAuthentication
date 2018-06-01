@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.min.css";
 import Header from "./Header";
 import Landing from "./Landing";
 import Signup from "./Signup";
-import Signin from "./Signin";
+import Login from "./Login";
 
 class App extends Component {
   render() {
@@ -20,7 +20,7 @@ class App extends Component {
             </div>
             <Route exact path="/" component={Landing} />
             <Route exact path="/signup" component={Signup} />
-            <Route exact path="/signin" component={Signin} />
+            <Route exact path="/login" component={Login} />
           </div>
         </BrowserRouter>
       </div>

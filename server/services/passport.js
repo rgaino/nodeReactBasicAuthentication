@@ -1,6 +1,9 @@
+const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const User = require("../models").User;
-const encription = require("./encryption");
+const encryption = require("./encryption");
+const logger = require("simple-node-logger").createSimpleLogger();
+logger.setLevel("debug");
 
 module.exports = function(passport) {
   passport.serializeUser(function(user, done) {
@@ -8,37 +11,43 @@ module.exports = function(passport) {
   });
 
   passport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
-      done(err, user);
+    //TODO: error handling
+    User.findById(id).then(function(user) {
+      done(null, user);
     });
   });
 
   passport.use(
-    "local-signup",
+    "local",
     new LocalStrategy(
       {
         // by default, local strategy uses username and password, we will override with email
-        usernameField: "email",
-        passwordField: "password",
+        usernameField: "userEmail",
+        passwordField: "userPassword",
         passReqToCallback: true // allows us to pass back the entire request to the callback
       },
       function(req, email, password, done) {
-        process.nextTick(function() {
-          User.findOne({ where: { email: email } }).then(existingUser => {
-            if (existingUser) {
-              console.log("user exists");
-              return done(null, existingUser);
-            } else {
-              var newUser = new User();
-              newUser.email = email;
-              newUser.name = req.body.name;
-              newUser.password = encription.generateHash(password);
+        logger.debug("On local-login strategy function. Will look for User now.", email, password);
 
-              newUser.save().then(newUserser => {
-                return done(null, newUser);
+        User.findOne({ where: { email: email } }).then(existingUser => {
+          if (existingUser) {
+            logger.debug("Email exists, will check pwd: ", password, existingUser.password);
+            encryption
+              .comparePasswordWithHash(password, existingUser.password)
+              .then(passwordMatches => {
+                if (passwordMatches) {
+                  logger.debug("Password matches.");
+                  return done(null, existingUser);
+                } else {
+                  logger.debug("Password does not match.");
+                  return done(null, false);
+                }
+                return done(null, existingUser);
               });
-            }
-          });
+          } else {
+            logger.debug("User with email does not exists, returning with error.");
+            return done("Email ou senha inválidos.");
+          }
         });
       }
     )
