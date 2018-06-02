@@ -6,13 +6,12 @@ const logger = require("simple-node-logger").createSimpleLogger();
 logger.setLevel("debug");
 
 module.exports = function(app, passport) {
-  app.get("/api/profile", middleware.authenticationMiddleware(), function(req, res) {
-    logger.debug("on GET/api/profile");
-    res.send({ path: "/profile" });
+  app.get("/api/current_user", (req, res) => {
+    //TODO: should not return password or any other sensitive information
+    res.send(req.user);
   });
 
   app.get("/api/logout", function(req, res) {
-    logger.debug("on GET/api/logout");
     req.logout();
     res.redirect("/");
   });
@@ -64,9 +63,9 @@ module.exports = function(app, passport) {
   });
 
   app.post("/api/login", function(req, res, next) {
-    logger.debug("Will authenticate");
     logger.debug(req.body);
     passport.authenticate("local", function(err, user, info) {
+      logger.debug("on passport.authenticate with ", err, user, info);
       if (err) {
         logger.debug("Error authenticating:", err);
         return next(err);

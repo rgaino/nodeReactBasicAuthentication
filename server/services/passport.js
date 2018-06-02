@@ -7,12 +7,16 @@ logger.setLevel("debug");
 
 module.exports = function(passport) {
   passport.serializeUser(function(user, done) {
+    logger.debug("on serializeUser with user.id:", user.id);
     done(null, user.id);
   });
 
   passport.deserializeUser(function(id, done) {
     //TODO: error handling
+    logger.debug("on deserializeUser with id:", id);
+
     User.findById(id).then(function(user) {
+      logger.debug("on deserializeUser/User.findById with user:", user);
       done(null, user);
     });
   });
