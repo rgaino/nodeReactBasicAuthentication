@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
+import { connect } from "react-redux";
+import * as actions from "../actions";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
@@ -10,8 +11,7 @@ class Login extends Component {
 
     this.state = {
       userEmail: "",
-      userPassword: "",
-      redirectToHome: false
+      userPassword: ""
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -30,14 +30,12 @@ class Login extends Component {
   }
 
   postLogin() {
-    console.log("will post");
     axios
       .post("/api/login", {
         userEmail: this.state.userEmail,
         userPassword: this.state.userPassword
       })
       .then(response => {
-        console.log("success");
         toast.success("👍 " + response.data.success_message, {
           position: "top-right",
           autoClose: 3000,
@@ -47,10 +45,9 @@ class Login extends Component {
           draggable: true,
           draggablePercent: 60
         });
-        this.setState({ redirectToHome: true });
+        this.props.fetchUser();
       })
       .catch(error => {
-        console.log("error", error);
         toast.error("⚠️ " + error.response.data.error_message, {
           position: "top-right",
           autoClose: 3000,
@@ -60,14 +57,11 @@ class Login extends Component {
           draggable: true,
           draggablePercent: 60
         });
+        this.props.fetchUser();
       });
   }
 
   render() {
-    if (this.state.redirectToHome) {
-      return <Redirect to="/" />;
-    }
-
     return (
       <div>
         <div>
@@ -104,4 +98,4 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default connect(null, actions)(Login);

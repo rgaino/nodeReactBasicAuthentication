@@ -13,11 +13,14 @@ module.exports = function(app, passport) {
 
   app.get("/api/logout", function(req, res) {
     req.logout();
-    res.redirect("/");
+    logger.debug("Logged out.");
+    res.send({ success_message: "Sessão encerrada." });
   });
 
   //User REST (so far only creates)
   app.post("/api/user", function(req, res) {
+    //TODO: after creating a user, log them in
+
     logger.debug(req.body);
 
     //all parameters must be present
